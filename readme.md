@@ -2,6 +2,8 @@
 
 ### 利用DexClassLoader来实现。
 
+jar 项目代码 [https://github.com/libern/SpeedoLib](https://github.com/libern/SpeedoLib)
+
 需要将普通的jar转换成dex的jar。
 
 ```
