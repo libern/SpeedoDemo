@@ -8,3 +8,7 @@
 cd /Users/libern/Library/Android/sdk/build-tools/29.0.1
 ./dx --dex --output=dynamic_combine_dx.jar /Users/libern/LibernWorking/dev/android/SpeedoLib/libspeedo/build/libs/libspeedo.jar
 ```
+
+1. 模拟下载jar到外部储存目录
+
+2. 从外部加载jar并调用外部方法
