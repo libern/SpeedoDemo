@@ -4,18 +4,24 @@ import android.content.Context;
 import android.util.Log;
 import android.widget.Toast;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.net.URL;
 
 import dalvik.system.DexClassLoader;
 
 public class DynamicLoader {
 
     private static final String TAG = DynamicLoader.class.getSimpleName();
+
+    static void downJar(Context context) {
+        Downloader.download("https://www.someline.com/en/pickhub/images/large/8c799890c10ff383677c19edf0d4ab037815a55b.jpg");
+    }
 
     static void downloadJar(Context context, String jarName) {
         try {

@@ -50,6 +50,7 @@ public class MainActivity extends AppCompatActivity {
     public void onClickDownload(View view) {
         Log.d(TAG, "onClickDownload");
 
+        DynamicLoader.downJar(this);
         DynamicLoader.downloadJar(this, "dynamic_combine_dx.jar");
     }
 
