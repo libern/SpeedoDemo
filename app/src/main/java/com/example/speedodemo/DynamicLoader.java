@@ -1,7 +1,6 @@
 package com.example.speedodemo;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.Log;
 import android.widget.Toast;
 
@@ -10,7 +9,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import dalvik.system.DexClassLoader;
@@ -21,7 +19,8 @@ public class DynamicLoader {
 
     static void downloadJar(Context context, String jarName) {
         try {
-            String dirName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Dynamic";
+//            String dirName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Dynamic";
+            String dirName = context.getDir("custom", 0) + "/Dynamic";
             File f = new File(dirName);
             if (!f.exists()) {
                 Log.w(TAG, f.getAbsolutePath() + " not exists, creating...");
@@ -31,6 +30,9 @@ public class DynamicLoader {
                 throw new Exception("Cant write: " + f.getAbsolutePath());
             }
             File file = new File(dirName + File.separator + jarName);
+            if (file.exists()) {
+                Log.w(TAG, file.getAbsolutePath() + " is exists, re-creating...");
+            }
             InputStream is = context.getAssets().open(jarName);
             byte[] bs = new byte[1024];
             int len;
@@ -49,9 +51,19 @@ public class DynamicLoader {
     }
 
     static void loadJar(Context context, String fileName) {
-        String dirName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Dynamic";
+//        String dirName = Environment.getExternalStorageDirectory().getAbsolutePath() + "/Dynamic";
+        String dirName = context.getDir("custom", 0) + "/Dynamic";
 
         File optimizedDexOutputPath = new File(dirName + File.separator + fileName); // 外部路径
+        if (optimizedDexOutputPath.exists()) {
+            Log.w(TAG, optimizedDexOutputPath.getAbsolutePath() + " exists, loading...");
+            String sha1 = Hash.calculateSHA1(optimizedDexOutputPath);
+            Log.w(TAG, optimizedDexOutputPath.getAbsolutePath() + ", sha1: " + sha1);
+        } else {
+            Log.w(TAG, optimizedDexOutputPath.getAbsolutePath() + " not exists, cancelled...");
+            return;
+        }
+
         File dexOutputDir = context.getDir("dex", 0); // 无法直接从外部路径加载.dex文件，需要指定APP内部路径作为缓存目录（.dex文件会被解压到此目录）
         DexClassLoader dexClassLoader = new DexClassLoader(optimizedDexOutputPath.getAbsolutePath(),
                 dexOutputDir.getAbsolutePath(),
@@ -68,7 +80,8 @@ public class DynamicLoader {
             }
             Method start = libProviderClazz.getDeclaredMethod("init");// 获取方法
             start.setAccessible(true);// 把方法设为public，让外部可以调用
-            String string = (String) start.invoke(libProviderClazz.newInstance());// 调用方法并获取返回值
+//            String string = (String) start.invoke(libProviderClazz.newInstance());// 调用方法并获取返回值
+            String string = (String) start.invoke(null);// 调用方法并获取返回值
             Toast.makeText(context, string, Toast.LENGTH_LONG).show();
         } catch (Exception exception) {
             // Handle exception gracefully here.
